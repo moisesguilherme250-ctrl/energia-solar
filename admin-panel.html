@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Nordeste Energia</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-wrapper">
+        <header class="admin-header">
+            <div class="admin-container">
+                <div class="admin-logo">
+                    <img src="logo-nordeste.png" alt="Nordeste Energia" class="logo-admin-header">
+                    <div>
+                        <h1>NORDESTE ENERGIA</h1>
+                        <span>Painel Administrativo</span>
+                    </div>
+                </div>
+                <button id="logoutBtn" class="btn-logout">Sair</button>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <div class="admin-container">
+                <div class="admin-tabs">
+                    <button class="tab-btn active" data-tab="nova-proposta">Nova Proposta</button>
+                    <button class="tab-btn" data-tab="propostas-lista">Propostas Criadas</button>
+                    <button class="tab-btn" data-tab="gerenciar-admins">Gerenciar Admins</button>
+                </div>
+
+                <div class="tab-content active" id="nova-proposta">
+                    <h2>Criar Nova Proposta</h2>
+                    <form id="propostaForm" class="proposta-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nomeCliente">Nome do Cliente *</label>
+                                <input type="text" id="nomeCliente" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cidadeCliente">Cidade *</label>
+                                <input type="text" id="cidadeCliente" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contaAtual">Valor Médio da Conta Atual (R$) *</label>
+                                <input type="number" id="contaAtual" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="kwhMes">Geração Mensal (kWh) *</label>
+                                <input type="number" id="kwhMes" step="0.01" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="valorTotal">Valor Total do Sistema (R$) *</label>
+                                <input type="number" id="valorTotal" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="valorParcela">Valor da Parcela (R$)</label>
+                                <input type="number" id="valorParcela" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="numParcelas">Número de Parcelas</label>
+                                <input type="number" id="numParcelas" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="tarifaKwh">Tarifa kWh Atual (R$)</label>
+                                <input type="number" id="tarifaKwh" step="0.01" value="0.85">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Gerar Proposta PDF</button>
+                            <button type="button" class="btn-secondary" id="previewBtn">Visualizar Prévia</button>
+                        </div>
+                    </form>
+
+                    <div id="calculosPreview" class="calculos-preview" style="display: none;">
+                        <h3>Resumo dos Cálculos</h3>
+                        <div class="calculos-grid">
+                            <div class="calculo-item">
+                                <span class="calculo-label">Economia Mensal:</span>
+                                <span class="calculo-value" id="economiaMensal">-</span>
+                            </div>
+                            <div class="calculo-item">
+                                <span class="calculo-label">Economia Anual:</span>
+                                <span class="calculo-value" id="economiaAnual">-</span>
+                            </div>
+                            <div class="calculo-item">
+                                <span class="calculo-label">Economia em 25 Anos:</span>
+                                <span class="calculo-value" id="economia25Anos">-</span>
+                            </div>
+                            <div class="calculo-item">
+                                <span class="calculo-label">Payback:</span>
+                                <span class="calculo-value" id="payback">-</span>
+                            </div>
+                            <div class="calculo-item">
+                                <span class="calculo-label">ROI:</span>
+                                <span class="calculo-value" id="roi">-</span>
+                            </div>
+                            <div class="calculo-item">
+                                <span class="calculo-label">Nova Conta de Luz:</span>
+                                <span class="calculo-value" id="novaContaLuz">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="propostas-lista">
+                    <h2>Propostas Criadas</h2>
+                    <div class="propostas-table-container">
+                        <table class="propostas-table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Cliente</th>
+                                    <th>Cidade</th>
+                                    <th>Valor Total</th>
+                                    <th>Economia Mensal</th>
+                                    <th>Payback</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="propostasTableBody">
+                                <tr>
+                                    <td colspan="7" class="empty-state">Nenhuma proposta criada ainda</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="gerenciar-admins">
+                    <h2>Gerenciar Administradores</h2>
+                    
+                    <div class="admin-section">
+                        <h3>Cadastrar Novo Administrador</h3>
+                        <form id="cadastroAdminForm" class="admin-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="novoAdminNome">Nome Completo *</label>
+                                    <input type="text" id="novoAdminNome" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="novoAdminUsername">Usuário *</label>
+                                    <input type="text" id="novoAdminUsername" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="novoAdminPassword">Senha *</label>
+                                    <input type="password" id="novoAdminPassword" required minlength="6">
+                                </div>
+                                <div class="form-group">
+                                    <label for="novoAdminPasswordConfirm">Confirmar Senha *</label>
+                                    <input type="password" id="novoAdminPasswordConfirm" required minlength="6">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Cadastrar Administrador</button>
+                        </form>
+                    </div>
+
+                    <div class="admin-section">
+                        <h3>Lista de Administradores</h3>
+                        <div class="admins-table-container">
+                            <table class="propostas-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Usuário</th>
+                                        <th>Data de Cadastro</th>
+                                        <th>Tipo</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminsTableBody">
+                                    <tr>
+                                        <td colspan="5" class="empty-state">Carregando...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="admin-script.js"></script>
+</body>
+</html>
